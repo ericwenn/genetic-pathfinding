@@ -16,6 +16,8 @@ class DNA(object):
 		self.time_to_completion = 0
 		self.time_alive = 0
 
+		self.best_distance = float("inf")
+
 		self.dna = []
 		for i in range(flowfield_dim):
 			self.dna.append([])
@@ -51,26 +53,18 @@ class DNA(object):
 	def calc_fitness(self, target_pos, total_distance):
 
 
-		distance = math.sqrt( math.pow(target_pos[0] - self.pos[0], 2) + math.pow(target_pos[1] - self.pos[1], 2))
-		distance_traveled = math.sqrt( math.pow(self.start_pos[0] - self.pos[0], 2) + math.pow(self.start_pos[1] - self.pos[1], 2)) / 5
 
-		if( distance == 0):
-			distance = 1
-
-
-		if( self.pos[0] < 0):
-			posx = 0
-		else:
-			posx = self.pos[0]
-
-
+		factor = 1
+		if( self.finished == 1):
+			self.best_distance = 1
+			factor = 2
 			
-		self.fitness = math.pow(posx * distance_traveled/(distance * self.time_to_completion),3)
+		self.fitness = math.pow(factor/float(self.best_distance * self.time_to_completion),4)
+
 
 		if( self.hit_obstacle == 1):
 			self.fitness =  0
-		if( self.finished == 1):
-			self.fitness = self.fitness * 2
+
 
 	def get_fitness(self):
 		return self.fitness
@@ -104,8 +98,8 @@ class DNA(object):
 
 
 	def _step(self):
-		flowfield_x = int(self.pos[0] / 5)
-		flowfield_y = int(self.pos[1] / 5)
+		flowfield_x = int(self.pos[0] / 20)
+		flowfield_y = int(self.pos[1] / 20)
 
 
 		if( flowfield_x < 0 or flowfield_x > self.flowfield_dim - 1 or flowfield_y < 0 or flowfield_y > self.flowfield_dim - 1 ):
@@ -118,6 +112,10 @@ class DNA(object):
 
 		if(self.finished == 0 and self.hit_obstacle == 0 and shouldMove):
 			self.pos = ( int(self.pos[0] + self.velocity[0]*5), int(self.pos[1] + self.velocity[1]*5) )
+			distance = math.sqrt( math.pow(self.target_pos[0] - self.pos[0],2) + math.pow(self.target_pos[1] - self.pos[1], 2))
+			if distance < self.best_distance:
+				self.best_distance = distance
+
 			self.time_alive += 1
 			self.time_to_completion += 1
 
@@ -129,9 +127,14 @@ class DNA(object):
 				self.time_to_completion = self.step
 				self.finished = 1
 
+		if( self.hit_obstacle == 1 or not shouldMove):
+			self.time_to_completion += 1
+
 		self.step += 1
 
 
 
 	def _pos(self):
 		return self.pos
+
+

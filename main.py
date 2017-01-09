@@ -2,10 +2,21 @@ import sys,pygame
 from Population import Population
 from Obstacle import Obstacle
 import math
-
-import os.path
+import time
+import os
 
 headless = os.path.isfile('headless.conf')
+log = os.path.isfile('log.conf')
+
+
+if( log ):
+	log_folder = "logs"
+	
+	if( not os.path.exists(log_folder)):
+		os.makedirs(log_folder)
+
+	dirname = time.strftime("%Y.%m.%d.%H.%M.%S")
+	os.makedirs(log_folder + "/" + dirname)
 
 if( not headless ):
 	size = width, height = 500,500
@@ -13,12 +24,12 @@ if( not headless ):
 	surface = pygame.Surface(size)
 
 
-population_size = 200
+population_size = 1000
 mutation_probability = 0.05
 goal_position = (250,250)
 start_position = (0,250)
-flowfield_dim = 100
-elite_size = 5
+flowfield_dim = 25
+elite_size = 1
 
 obstacles = []
 
@@ -33,7 +44,7 @@ population = Population(population_size, mutation_probability, elite_size, goal_
 while(1):
 	population_list = population.get_population_list()
 
-	for x in range(500):
+	for x in range(100):
 		if( not headless ):
 			screen.fill((255,255,255))
 			pygame.draw.circle(screen, (0,255,0), goal_position, 5, 0)
@@ -66,7 +77,14 @@ while(1):
 	best_fit = population.get_best_fit()
 	print ""
 	print "Generation {}".format(population.generations)
-	print "Best fit: Position [{}] TTC: [{}] Hit obstacle: [{}] Done: [{}] Fitness: [{}]".format(best_fit._pos(), best_fit.time_to_completion, best_fit.hit_obstacle, best_fit.finished, best_fit.get_fitness())
+	print "Best fit: Position: [{}] Closest: [{}] TTC: [{}] Hit obstacle: [{}] Done: [{}] Fitness: [{}]".format(best_fit._pos(), best_fit.best_distance, best_fit.time_to_completion, best_fit.hit_obstacle, best_fit.finished, best_fit.get_fitness())
+
+	if( log ):
+		log_name = "gen_{}".format(population.generations)
+		log_gen = file(log_folder + "/" + dirname + "/" + log_name, "w+")
+		for x in range(flowfield_dim):
+			for y in range(flowfield_dim):
+				log_gen.write( "{} {}\n".format( best_fit.dna[x][y][0], best_fit.dna[x][y][1]))
 
 	sum_x = 0
 	sum_y = 0
@@ -89,7 +107,7 @@ while(1):
 	avg_done = float(sum_done) / population_size
 	avg_fitness = float(sum_fitness) / population_size
 
-	print "Best fit: Position [{}] TTC: [{}] Hit obstacle: [{}] Done: [{}] Fitness: [{}]".format((avg_x, avg_y), avg_ttc, avg_hit, avg_done, avg_fitness)
+	print "Average fit: Position [{}] TTC: [{}] Hit obstacle: [{}] Done: [{}] Fitness: [{}]".format((avg_x, avg_y), avg_ttc, avg_hit, avg_done, avg_fitness)
 
 	population.natural_selection()
 
@@ -103,7 +121,7 @@ while(1):
 
 		for f_X in range(flowfield_dim):
 			for f_Y in range(flowfield_dim):
-				pygame.draw.line(screen, (0,0,0), (f_X*5, f_Y*5), (f_X*5 + int(best_fit.dna[f_X][f_Y][0]*5), f_Y*5 + int(best_fit.dna[f_X][f_Y][1]*5)))
+				pygame.draw.line(screen, (0,0,0), (f_X*20, f_Y*20), (f_X*20 + int(best_fit.dna[f_X][f_Y][0]*20), f_Y*20 + int(best_fit.dna[f_X][f_Y][1]*20)))
 
 		best_fit_clone = best_fit.clone()
 
@@ -135,7 +153,7 @@ while(1):
 		for fit in fit_list:
 			norm_fit = float(fit[1]) / 100
 			color = ( 255 - (norm_fit*255), 0 + norm_fit*255, 0)
-	#		pygame.draw.circle(screen, color, fit[0]._pos(), 2, 0)
+			pygame.draw.circle(screen, color, fit[0]._pos(), 2, 0)
 
 		pygame.display.flip()
 

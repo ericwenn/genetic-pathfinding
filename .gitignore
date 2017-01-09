@@ -1,2 +1,3 @@
-headless.conf
+*.conf
 *.pyc
+logs/*

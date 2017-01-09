@@ -24,7 +24,7 @@ if( not headless ):
 	surface = pygame.Surface(size)
 
 
-population_size = 100
+population_size = 200
 mutation_probability = 0.05
 goal_position = (250,250)
 start_position = (0,250)

@@ -2,12 +2,15 @@ import sys,pygame
 from Population import Population
 from Obstacle import Obstacle
 import math
-pygame.init()
 
-size = width, height = 500,500
+import os.path
 
-screen = pygame.display.set_mode(size)
-surface = pygame.Surface(size)
+headless = os.path.isfile('headless.conf')
+
+if( not headless ):
+	size = width, height = 500,500
+	screen = pygame.display.set_mode(size)
+	surface = pygame.Surface(size)
 
 
 population_size = 200
@@ -31,29 +34,33 @@ while(1):
 	population_list = population.get_population_list()
 
 	for x in range(500):
-		screen.fill((255,255,255))
-		pygame.draw.circle(screen, (0,255,0), goal_position, 5, 0)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 20, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 40, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 60, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 80, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 100, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 120, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 140, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 160, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 180, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 200, 1)
+		if( not headless ):
+			screen.fill((255,255,255))
+			pygame.draw.circle(screen, (0,255,0), goal_position, 5, 0)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 20, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 40, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 60, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 80, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 100, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 120, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 140, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 160, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 180, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 200, 1)
 
 
-		for o in range(len(obstacles)):
-			pygame.draw.rect(screen, (255,0,0), (obstacles[o].x, obstacles[o].y, obstacles[o].width, obstacles[o].height),0)
+		if( not headless ):
+			for o in range(len(obstacles)):
+				pygame.draw.rect(screen, (255,0,0), (obstacles[o].x, obstacles[o].y, obstacles[o].width, obstacles[o].height),0)
 
 		for r in range(len(population_list)):
 			population_list[r]._step()
-			pygame.draw.circle(screen, (0,0,0), population_list[r]._pos(), 2, 0)
+			if( not headless ):
+				pygame.draw.circle(screen, (0,0,0), population_list[r]._pos(), 2, 0)
 			
 
-		pygame.display.flip()
+		if( not headless ):
+			pygame.display.flip()
 
 	population.calcFitness()
 	best_fit = population.get_best_fit()
@@ -87,47 +94,50 @@ while(1):
 	population.natural_selection()
 
 	fit_list = population.get_fit_list()
-	screen.fill((255,255,255))
+
+
+	if( not headless ):
+		screen.fill((255,255,255))
 
 
 
-	for f_X in range(flowfield_dim):
-		for f_Y in range(flowfield_dim):
-			pygame.draw.line(screen, (0,0,0), (f_X*5, f_Y*5), (f_X*5 + int(best_fit.dna[f_X][f_Y][0]*5), f_Y*5 + int(best_fit.dna[f_X][f_Y][1]*5)))
+		for f_X in range(flowfield_dim):
+			for f_Y in range(flowfield_dim):
+				pygame.draw.line(screen, (0,0,0), (f_X*5, f_Y*5), (f_X*5 + int(best_fit.dna[f_X][f_Y][0]*5), f_Y*5 + int(best_fit.dna[f_X][f_Y][1]*5)))
 
-	best_fit_clone = best_fit.clone()
+		best_fit_clone = best_fit.clone()
 
-	for x in range(500):
-		pygame.draw.circle(screen, (0,255,0), goal_position, 5, 0)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 20, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 40, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 60, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 80, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 100, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 120, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 140, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 160, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 180, 1)
-		pygame.draw.circle(screen, (255,0,0), goal_position, 200, 1)
+		for x in range(500):
+			pygame.draw.circle(screen, (0,255,0), goal_position, 5, 0)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 20, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 40, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 60, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 80, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 100, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 120, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 140, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 160, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 180, 1)
+			pygame.draw.circle(screen, (255,0,0), goal_position, 200, 1)
 
 
-		for o in range(len(obstacles)):
-			pygame.draw.rect(screen, (255,0,0), (obstacles[o].x, obstacles[o].y, obstacles[o].width, obstacles[o].height),0)
+			for o in range(len(obstacles)):
+				pygame.draw.rect(screen, (255,0,0), (obstacles[o].x, obstacles[o].y, obstacles[o].width, obstacles[o].height),0)
 
-		best_fit_clone._step()
-		pygame.draw.circle(screen, (0,0,0), best_fit_clone._pos(), 2, 0)
-			
+			best_fit_clone._step()
+			pygame.draw.circle(screen, (0,0,0), best_fit_clone._pos(), 2, 0)
+				
+
+			pygame.display.flip()
+
+
+
+		for fit in fit_list:
+			norm_fit = float(fit[1]) / 100
+			color = ( 255 - (norm_fit*255), 0 + norm_fit*255, 0)
+	#		pygame.draw.circle(screen, color, fit[0]._pos(), 2, 0)
 
 		pygame.display.flip()
-
-
-
-	for fit in fit_list:
-		norm_fit = float(fit[1]) / 100
-		color = ( 255 - (norm_fit*255), 0 + norm_fit*255, 0)
-#		pygame.draw.circle(screen, color, fit[0]._pos(), 2, 0)
-
-	pygame.display.flip()
 
 
 	population.generate()

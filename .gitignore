@@ -1,1 +1,2 @@
-config.py
+headless.conf
+*.pyc

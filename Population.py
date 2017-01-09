@@ -38,12 +38,9 @@ class Population(object):
 	def natural_selection(self):
 		self.mating_pool = []
 		self.fit_list = []
-		max_fitness = 0
-		for i in range(self.pop_size):
-			if( self.population[i].get_fitness() > max_fitness):
-				max_fitness = self.population[i].get_fitness()
+		self.elites = sorted(self.population, key=lambda dna: -dna.fitness)
+		max_fitness = self.elites[0].get_fitness()
 
-			self.qualify_for_elite(self.population[i])
 
 
 
@@ -57,40 +54,6 @@ class Population(object):
 		print "Mating pool is {} specimens".format(len(self.mating_pool))
 
 
-	def qualify_for_elite(self, dna):
-
-			
-		o_len = len(self.elites)
-		if (o_len == 0):
-			self.elites.append(dna)
-
-		elif( o_len < self.elite_size ):
-			added = 0
-			for i in range(o_len):
-				if( dna.get_fitness() > self.elites[i].get_fitness()):
-					self.elites.append(self.elites[ o_len - 1])
-					for ii in range(o_len - 1, i - 1, -1):
-						if( ii == i):
-							self.elites[ ii ] = dna
-						else:
-							self.elites[ ii ] = self.elites[ii-1]
-					added = 1
-					break
-			if( added == 0):			
-				self.elites.append(dna)
-		else:
-			add_index = -1
-			for i in range(len(self.elites)):
-				if( dna.get_fitness() > self.elites[i].get_fitness()):
-					add_index = i
-					break
-			if( add_index != -1):
-				o_len = len(self.elites)
-				for i in range(o_len - 1, -1, -1):
-					if( i == add_index):
-						self.elites[i] = dna
-					if( i > add_index):
-						self.elites[i] = self.elites[i-1]
 
 
 		
